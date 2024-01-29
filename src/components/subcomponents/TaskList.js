@@ -57,7 +57,7 @@ const TaskList = () => {
 
   // Retrieve data and action type from Redux state
   const { data: item, actionType } = useAppSelector((state) => state.todos);
-
+  
   // Manage items state using custom hook
   const [items, setItems] = useCustomState([]);
 
@@ -67,7 +67,8 @@ const TaskList = () => {
   }, [dispatch]);
 
   // Update items when todos are fetched
-  useCustomEffect(() => {
+  useCustomEffect(() => { 
+    console.log("item",item)
     if (actionType === "fetchTodosAsync" && item.length !== undefined) {
       setItems(item);
     }
@@ -88,6 +89,7 @@ const TaskList = () => {
 
   // Handle delete todo event
   const handleDelete = async (itemId) => {
+    console.log("itemId",itemId)
     try {
       await dispatch(deleteTodoAsync(itemId));
       const updatedTodos = await dispatch(fetchTodosAsync());

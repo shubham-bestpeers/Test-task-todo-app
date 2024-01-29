@@ -13,6 +13,7 @@ export const fetchTodosAsync = createAsyncThunk('users/fetchTodos', async () => 
 // Async thunk for deleting a todo
 export const deleteTodoAsync = createAsyncThunk('users/deleteTodo', async (commentId) => {
   const response = await apiFunctions.makeRequest('DELETE', `${commentId}`);
+  console.log("data",response.data)
   return response.data;
 });
 
