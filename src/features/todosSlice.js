@@ -13,7 +13,6 @@ export const fetchTodosAsync = createAsyncThunk('users/fetchTodos', async () => 
 // Async thunk for deleting a todo
 export const deleteTodoAsync = createAsyncThunk('users/deleteTodo', async (commentId) => {
   const response = await apiFunctions.makeRequest('DELETE', `${commentId}`);
-  console.log("data",response.data)
   return response.data;
 });
 
@@ -26,6 +25,12 @@ export const addTodoAsync = createAsyncThunk('users/addTodo', async (data) => {
 // Async thunk for completing a todo
 export const completedTodoAsync = createAsyncThunk('users/compeleteTodo', async (data) => {
   const response = await apiFunctions.makeRequest('PUT', data.id, { completed: !data.completed });
+  return response.data;
+});
+
+// Async thunk for swap a todo
+export const swapTodoAsync = createAsyncThunk('users/swapTodo', async (data) => {
+  const response = await apiFunctions.makeRequest('PUT','', {sourceId : data.sourceId ,destinationId  : data.destinationId});
   return response.data;
 });
 
@@ -47,6 +52,7 @@ const todosSlice = createSlice({
       { asyncThunk: fetchTodosAsync, actionType: 'fetchTodosAsync' },
       { asyncThunk: deleteTodoAsync, actionType: 'deleteTodoAsync' },
       { asyncThunk: addTodoAsync, actionType: 'addTodoAsync' },
+      { asyncThunk: swapTodoAsync, actionType: 'swapTodoAsync' },
     ];
 
     asyncReducers.forEach(({ asyncThunk, actionType }) => {

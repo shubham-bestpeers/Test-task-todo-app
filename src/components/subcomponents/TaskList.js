@@ -23,6 +23,7 @@ import {
   fetchTodosAsync,
   completedTodoAsync,
   deleteTodoAsync,
+  swapTodoAsync
 } from "../../features/todosSlice";
 
 // Helper function to reorder items in the list after drag and drop
@@ -68,28 +69,33 @@ const TaskList = () => {
 
   // Update items when todos are fetched
   useCustomEffect(() => { 
-    console.log("item",item)
     if (actionType === "fetchTodosAsync" && item.length !== undefined) {
       setItems(item);
     }
   }, [item, actionType]);
 
   // Handle drag and drop end event
-  const onDragEnd = (result) => {
+  const onDragEnd = (result) => { 
     if (!result.destination) {
       return;
+    }  
+
+    let data = {
+      sourceId : result.source.index,
+      destinationId  : result.destination.index
     }
+    dispatch(swapTodoAsync(data))
     const updatedItems = reorder(
       items,
       result.source.index,
       result.destination.index
-    );
+    ); 
     setItems(updatedItems);
   };
+    
 
   // Handle delete todo event
   const handleDelete = async (itemId) => {
-    console.log("itemId",itemId)
     try {
       await dispatch(deleteTodoAsync(itemId));
       const updatedTodos = await dispatch(fetchTodosAsync());
