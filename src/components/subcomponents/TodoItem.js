@@ -1,6 +1,9 @@
 // Import React for creating functional components
 import React from "react"; 
 
+// Import SweetAlert2 for displaying alerts
+import Swal from 'sweetalert2';
+
 // Import Material-UI components for UI elements
 import { Box, Checkbox, Typography } from "@mui/material"; 
 
@@ -8,6 +11,31 @@ import { Box, Checkbox, Typography } from "@mui/material";
 import CommonButton from "../commoncomponents/CommonButton"; 
 
 const TodoItem = ({ provided, snapshot, item, classes, getItemStyle, handleDelete, toggleTodoCompleted }) => {
+ 
+  const showDeleteConfirmation = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(item.id);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your todo has been deleted.",
+          icon: "success",
+          timer: 1000, // Time in milliseconds (2 seconds in this example)
+          timerProgressBar: true, // Show a progress bar while the timer is running
+          showConfirmButton: false, // Hide the confirm button
+        });
+              }
+    });
+  };
+
   return (
     // Wrapper for draggable todo item
     <div
@@ -42,10 +70,9 @@ const TodoItem = ({ provided, snapshot, item, classes, getItemStyle, handleDelet
             {item.text}
           </Typography>
         </Box>
-
         {/* Button to delete the todo item */}
         <CommonButton
-          onClick={() => handleDelete(item.id)}
+          onClick={showDeleteConfirmation}
           icontext="delete"
           styleclass={classes.deleteTodo}
           buttontext="Delete"

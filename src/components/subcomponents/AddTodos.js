@@ -2,22 +2,15 @@
 import React, { useState } from 'react';
 
 // Import Material-UI components for building the UI
-import {
-  Typography,
-  Paper,
-  Box,
-} from "@mui/material";
+import { Typography, Paper, Box } from "@mui/material";
 
-// Import a custom button component for consistency in the application
+// Import SweetAlert2 for displaying alerts
+import Swal from 'sweetalert2';
+
+// Import custom components
 import CommonButton from '../commoncomponents/CommonButton';
-
-// Import a custom text field component for consistency in the application
 import CommonTextField from '../commoncomponents/CommonTextFeild';
-
-// Import the hook for accessing the Redux dispatch function
 import { useAppDispatch } from "../../app/hooks";
-
-// Import asynchronous actions for adding and fetching todos from the Redux slice
 import { addTodoAsync, fetchTodosAsync } from "../../features/todosSlice";
 
 // Import styles from a separate file for better code organization
@@ -32,20 +25,47 @@ const AddTodos = () => {
   // State to manage the text input for new todos
   const [newTodoText, setNewTodoText] = useState("");
 
-  // Asynchronous function to add a new todo
-  const addTodo = async (text) => { 
+  // Function to add a new todo
+  const addTodo = async (text) => {
     try {
-      // Dispatch the addTodoAsync action within the try block
-      await dispatch(addTodoAsync(text));
-      
-      // Fetch updated todos after adding a new todo
-      await dispatch(fetchTodosAsync());
-      
-      // Clear the input field after successful addition
-      setNewTodoText("");
+      // Check if the text is valid
+      if (text.trim().length > 0) {
+        // Dispatch the addTodoAsync action within the try block
+        await dispatch(addTodoAsync(text));
+
+        // Fetch updated todos after adding a new todo
+        await dispatch(fetchTodosAsync());
+
+        // Clear the input field after successful addition
+        setNewTodoText("");
+
+        // Show success alert using SweetAlert2
+        Swal.fire({
+          title: "Todo Added",
+          text: "Your todo has been added successfully.",
+          icon: "success",
+          timer: 1000
+        });
+      } else {
+        // Show alert for invalid input using SweetAlert2
+        Swal.fire({
+          title: "Invalid Input",
+          text: "Please enter a valid todo text with more than 1 character.",
+          icon: "info",
+          timer: 1000
+        });
+      }
     } catch (error) {
       // Handle errors if needed
       console.error("Error adding todo:", error);
+    }
+  };
+
+  // Event handler for key press (Enter)
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      // Call the addTodo function when Enter key is pressed
+      addTodo(newTodoText);
     }
   };
 
@@ -66,12 +86,7 @@ const AddTodos = () => {
             <CommonTextField
               fullWidth
               value={newTodoText}
-              onKeyPress={(event) => {
-                // Check if Enter key is pressed and call addTodo function
-                if (event.key === "Enter") {
-                  addTodo(newTodoText);
-                }
-              }}
+              onKeyPress={handleKeyPress}
               onChange={(event) => setNewTodoText(event.target.value)}
             />
           </Box>
@@ -87,4 +102,4 @@ const AddTodos = () => {
   );
 };
 
-export default AddTodos; // Export the component
+export default AddTodos;
